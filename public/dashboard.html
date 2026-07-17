@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Bank - Vault Dashboard</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <!-- Chart.js CDN for analytics rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar glass-panel">
+      <div>
+        <div class="logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          NEXUS <span>VAULT</span>
+        </div>
+
+        <!-- CUSTOMER NAV -->
+        <nav class="nav-links" id="customer-nav" style="display: none;">
+          <button class="nav-item active" onclick="switchTab('cust-dash')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
+            Dashboard
+          </button>
+          <button class="nav-item" onclick="switchTab('cust-atm')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            Deposit & Withdraw
+          </button>
+          <button class="nav-item" onclick="switchTab('cust-transfer')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="21" x2="17" y2="3"></line><polyline points="12 16 17 21 22 16"></polyline><line x1="7" y1="3" x2="7" y2="21"></line><polyline points="2 8 7 3 12 8"></polyline></svg>
+            Fund Transfer
+          </button>
+          <button class="nav-item" onclick="switchTab('cust-goals')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+            Savings Goals
+          </button>
+          <button class="nav-item" onclick="switchTab('cust-ledger')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            Ledger History
+          </button>
+        </nav>
+
+        <!-- MANAGER NAV -->
+        <nav class="nav-links" id="manager-nav" style="display: none;">
+          <button class="nav-item active" onclick="switchTab('mgr-dash')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+            Bank Analytics
+          </button>
+          <button class="nav-item" onclick="switchTab('mgr-users')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            User Accounts
+          </button>
+          <button class="nav-item" onclick="switchTab('mgr-approvals')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+            Approvals Queue <span id="nav-pending-count" style="display: none; background: var(--warning); color: #080811; border-radius: 50%; font-size: 10px; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; margin-left: 5px;">0</span>
+          </button>
+          <button class="nav-item" onclick="switchTab('mgr-audit')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><polyline points="12 6 12 12 16 14"></polyline></svg>
+            System Logs
+          </button>
+        </nav>
+      </div>
+
+      <!-- USER PROFILE FOOTER -->
+      <div class="sidebar-user">
+        <div class="user-avatar" id="avatar-letters">US</div>
+        <div class="user-info">
+          <span class="name" id="user-display-name">Username</span>
+          <span class="role" id="user-display-role">Customer</span>
+        </div>
+        <button class="btn btn-secondary" onclick="logout()" style="padding: 8px; margin-left: auto; border-radius: 8px;" title="Logout">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN VIEW -->
+    <main class="main-content">
+
+      <!-- ==================== CUSTOMER DASHBOARD ==================== -->
+      <div class="tab-content active" id="cust-dash">
+        <div class="dashboard-header">
+          <div>
+            <h2>Welcome Back, <span id="welcome-username">Customer</span></h2>
+            <p style="color: var(--text-secondary); margin-top: 5px;" id="account-info-header">Checking Account Number: Loading...</p>
+          </div>
+          <button class="btn btn-primary" onclick="switchTab('cust-transfer')">Transfer Money</button>
+        </div>
+
+        <div class="stats-grid">
+          <div class="glass-panel stat-card">
+            <div class="label">Checking Account</div>
+            <div class="value" id="checking-balance-display">$0.00</div>
+            <div class="extra">Available immediately</div>
+            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+          </div>
+          <div class="glass-panel stat-card">
+            <div class="label">Savings Vault</div>
+            <div class="value" id="savings-balance-display">$0.00</div>
+            <div class="extra">Accumulating security</div>
+            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M12 6v6"></path><path d="M12 12h4"></path></svg>
+          </div>
+          <div class="glass-panel stat-card">
+            <div class="label">Total Wealth</div>
+            <div class="value" id="total-balance-display">$0.00</div>
+            <div class="extra">Net banking holdings</div>
+            <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+          </div>
+        </div>
+
+        <div class="two-col-grid">
+          <!-- Transaction Ledger Summary -->
+          <div class="glass-panel" style="padding: 30px;">
+            <h3 style="font-family: var(--font-display); font-size: 20px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
+              Recent Activity
+              <a href="#" onclick="switchTab('cust-ledger')" style="font-size: 13px; color: var(--accent-primary); text-decoration: none; font-family: var(--font-sans);">View Full Ledger &rarr;</a>
+            </h3>
+            <div class="transaction-list-container" id="recent-transactions-list">
+              <p style="color: var(--text-secondary); text-align: center; padding: 20px 0;">No transaction history found.</p>
+            </div>
+          </div>
+
+          <!-- Small Analytics Card -->
+          <div class="glass-panel" style="padding: 30px; display: flex; flex-direction: column;">
+            <h3 style="font-family: var(--font-display); font-size: 20px; margin-bottom: 25px;">Cash Flow Chart</h3>
+            <div style="flex: 1; min-height: 220px; position: relative;">
+              <canvas id="customerCashFlowChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== CUSTOMER ATM / CASH OPERATIONS ==================== -->
+      <div class="tab-content" id="cust-atm">
+        <div class="dashboard-header">
+          <h2>ATM Operations</h2>
+        </div>
+        <div class="two-col-grid">
+          <!-- Deposit Form -->
+          <div class="glass-panel" style="padding: 30px;">
+            <h3 style="font-family: var(--font-display); margin-bottom: 20px;">Deposit Funds</h3>
+            <form id="atm-deposit-form">
+              <div class="form-group">
+                <label for="deposit-account">Destination Account</label>
+                <select id="deposit-account">
+                  <option value="checking">Checking Account</option>
+                  <option value="savings">Savings Vault</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="deposit-amount">Deposit Amount ($)</label>
+                <input type="number" id="deposit-amount" placeholder="0.00" min="0.01" step="0.01" required>
+              </div>
+              <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Deposit Cash</button>
+            </form>
+          </div>
+
+          <!-- Withdraw Form -->
+          <div class="glass-panel" style="padding: 30px;">
+            <h3 style="font-family: var(--font-display); margin-bottom: 20px;">Withdraw Funds</h3>
+            <form id="atm-withdraw-form">
+              <div class="form-group">
+                <label for="withdraw-account">Source Account</label>
+                <select id="withdraw-account">
+                  <option value="checking">Checking Account</option>
+                  <option value="savings">Savings Vault</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="withdraw-amount">Withdrawal Amount ($)</label>
+                <input type="number" id="withdraw-amount" placeholder="0.00" min="0.01" step="0.01" required>
+              </div>
+              <button type="submit" class="btn btn-accent" style="margin-top: 10px;">Withdraw Cash</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== CUSTOMER FUND TRANSFER ==================== -->
+      <div class="tab-content" id="cust-transfer">
+        <div class="dashboard-header">
+          <h2>Peer-to-Peer Transfer</h2>
+        </div>
+        <div class="glass-panel" style="padding: 40px; max-width: 600px; margin: 0 auto;">
+          <h3 style="font-family: var(--font-display); margin-bottom: 10px;">Send Funds Instantly</h3>
+          <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 30px;">
+            Provide the recipient's 10-digit account number. Note: Transfers exceeding **$5,000.00** require manager verification and approval before release.
+          </p>
+          <form id="transfer-funds-form">
+            <div class="form-group">
+              <label for="transfer-recipient">Recipient's Account Number</label>
+              <input type="text" id="transfer-recipient" placeholder="10-digit number (e.g. 1048515527)" required minlength="10" maxlength="10">
+            </div>
+            <div class="form-group">
+              <label for="transfer-amount">Amount ($)</label>
+              <input type="number" id="transfer-amount" placeholder="0.00" min="0.01" step="0.01" required>
+            </div>
+            <div class="form-group">
+              <label for="transfer-desc">Memo / Description</label>
+              <input type="text" id="transfer-desc" placeholder="e.g. Rent, Gas split, Dinner">
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 15px; width: 100%; justify-content: center;">Send Secure Transfer</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ==================== CUSTOMER SAVINGS GOALS ==================== -->
+      <div class="tab-content" id="cust-goals">
+        <div class="dashboard-header">
+          <h2>Savings Goals</h2>
+        </div>
+        <div class="two-col-grid">
+          <!-- Goals List -->
+          <div class="glass-panel" style="padding: 30px;">
+            <h3 style="font-family: var(--font-display); margin-bottom: 25px;">Your Saving Goals</h3>
+            <div id="savings-goals-list" style="display: flex; flex-direction: column; gap: 20px;">
+              <p style="color: var(--text-secondary); text-align: center; padding: 20px 0;">No active savings goals. Plan a goal to build savings!</p>
+            </div>
+          </div>
+
+          <!-- Create Goal Form -->
+          <div class="glass-panel" style="padding: 30px;">
+            <h3 style="font-family: var(--font-display); margin-bottom: 20px;">Create Savings Goal</h3>
+            <form id="create-goal-form">
+              <div class="form-group">
+                <label for="goal-name">Goal Target / Name</label>
+                <input type="text" id="goal-name" placeholder="e.g. Trip to Japan, Laptop" required>
+              </div>
+              <div class="form-group">
+                <label for="goal-target">Target Amount ($)</label>
+                <input type="number" id="goal-target" placeholder="0.00" min="1" step="0.01" required>
+              </div>
+              <div class="form-group">
+                <label for="goal-deadline">Deadline Date</label>
+                <input type="date" id="goal-deadline" required>
+              </div>
+              <button type="submit" class="btn btn-accent" style="margin-top: 10px; width: 100%; justify-content: center;">Establish Goal</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== CUSTOMER FULL LEDGER ==================== -->
+      <div class="tab-content" id="cust-ledger">
+        <div class="dashboard-header">
+          <h2>Transaction Ledger</h2>
+        </div>
+        <div class="glass-panel" style="padding: 30px;">
+          <!-- Filter Controls -->
+          <div class="ledger-filters">
+            <input type="text" id="ledger-search" class="form-group" placeholder="Search memo, account, or recipient..." style="flex: 1; min-width: 250px; margin-bottom: 0;">
+            <select id="ledger-type-filter" class="form-group" style="width: 150px; margin-bottom: 0;">
+              <option value="all">All Types</option>
+              <option value="deposit">Deposits</option>
+              <option value="withdraw">Withdrawals</option>
+              <option value="transfer">Transfers</option>
+            </select>
+            <select id="ledger-sort-order" class="form-group" style="width: 150px; margin-bottom: 0;">
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+            </select>
+            <button class="btn btn-secondary" onclick="fetchLedger()">Apply Filters</button>
+          </div>
+
+          <!-- Transaction List -->
+          <div class="transaction-list-container" id="full-ledger-list" style="margin-top: 20px;">
+            <p style="color: var(--text-secondary); text-align: center; padding: 20px 0;">No ledger activities record.</p>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ==================== MANAGER DASHBOARD / ANALYTICS ==================== -->
+      <div class="tab-content" id="mgr-dash">
+        <div class="dashboard-header">
+          <div>
+            <h2>Nexus Banking Analytics</h2>
+            <p style="color: var(--text-secondary); margin-top: 5px;">Real-time balance totals, active clients, and liquidity ratios.</p>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="glass-panel stat-card">
+            <div class="label">Total Bank Assets</div>
+            <div class="value" id="mgr-total-assets">$0.00</div>
+            <div class="extra">Combined customer holdings</div>
+          </div>
+          <div class="glass-panel stat-card">
+            <div class="label">Checking Volume</div>
+            <div class="value" id="mgr-total-checking">$0.00</div>
+            <div class="extra">Available liquid capital</div>
+          </div>
+          <div class="glass-panel stat-card">
+            <div class="label">Savings Holdings</div>
+            <div class="value" id="mgr-total-savings">$0.00</div>
+            <div class="extra">Locked reserve balance</div>
+          </div>
+          <div class="glass-panel stat-card">
+            <div class="label">Client Activity</div>
+            <div class="value"><span id="mgr-active-users">0</span> / <span id="mgr-total-users">0</span></div>
+            <div class="extra"><span id="mgr-frozen-users" style="color: var(--danger); font-weight:600;">0</span> locked account(s)</div>
+          </div>
+        </div>
+
+        <div class="two-col-grid">
+          <!-- Pending Approvals Alert List -->
+          <div class="glass-panel" style="padding: 30px;">
+            <h3 style="font-family: var(--font-display); font-size: 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+              Attention Needed
+              <span class="btn btn-secondary" style="font-size:11px; padding: 4px 8px; cursor:default;" id="mgr-pending-alert-badge">0 Pending</span>
+            </h3>
+            <div class="transaction-list-container" id="mgr-pending-alerts-list">
+              <p style="color: var(--text-secondary); text-align: center; padding: 20px 0;">All transactions cleared. No actions needed.</p>
+            </div>
+          </div>
+
+          <!-- Total transfers analytics -->
+          <div class="glass-panel" style="padding: 30px; display: flex; flex-direction: column;">
+            <h3 style="font-family: var(--font-display); font-size: 20px; margin-bottom: 25px;">Liquidity & Flow</h3>
+            <div style="flex: 1; min-height: 220px; position: relative;">
+              <canvas id="managerLiquidityChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== MANAGER USER MANAGEMENT ==================== -->
+      <div class="tab-content" id="mgr-users">
+        <div class="dashboard-header">
+          <h2>User Accounts Registry</h2>
+        </div>
+        <div class="glass-panel" style="padding: 30px;">
+          <!-- Filter Tools -->
+          <div class="ledger-filters" style="margin-bottom: 25px;">
+            <input type="text" id="mgr-user-search" class="form-group" placeholder="Search by name, email, or account number..." style="flex: 1; min-width: 250px; margin-bottom: 0;">
+            <select id="mgr-user-status-filter" class="form-group" style="width: 160px; margin-bottom: 0;">
+              <option value="all">All Statuses</option>
+              <option value="active">Active Only</option>
+              <option value="frozen">Frozen Only</option>
+            </select>
+            <button class="btn btn-secondary" onclick="fetchManagerUsers()">Search Directory</button>
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Account Number</th>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Checking Balance</th>
+                  <th>Savings Balance</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="mgr-users-table-body">
+                <tr>
+                  <td colspan="7" style="color: var(--text-secondary); text-align: center; padding: 30px 0;">Loading user records...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== MANAGER APPROVALS QUEUE ==================== -->
+      <div class="tab-content" id="mgr-approvals">
+        <div class="dashboard-header">
+          <h2>Pending Compliance Approvals</h2>
+        </div>
+        <div class="glass-panel" style="padding: 30px;">
+          <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 25px;">
+            High-value transfer requests (> $5,000.00) are flagged and held in escrow below. Approve to complete the debit credit cycle, or reject to return funds to sender.
+          </p>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>TX ID</th>
+                  <th>Sender</th>
+                  <th>Recipient</th>
+                  <th>Amount</th>
+                  <th>Memo</th>
+                  <th>Date/Time</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="mgr-approvals-table-body">
+                <tr>
+                  <td colspan="7" style="color: var(--text-secondary); text-align: center; padding: 30px 0;">No pending transactions found.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== MANAGER AUDIT LOGS ==================== -->
+      <div class="tab-content" id="mgr-audit">
+        <div class="dashboard-header">
+          <h2>Security Audit Logs</h2>
+        </div>
+        <div class="glass-panel" style="padding: 30px;">
+          <div class="audit-list" id="mgr-audit-logs-list">
+            <p style="color: var(--text-secondary); text-align: center; padding: 20px 0;">Loading audit history...</p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ALLOCATE TO SAVINGS GOAL MODAL -->
+  <div class="modal-overlay" id="allocate-goal-modal">
+    <div class="glass-panel modal-content">
+      <button class="modal-close" onclick="closeModal('allocate-goal-modal')">&times;</button>
+      <div class="modal-header">
+        <h2>Allocate Savings</h2>
+        <p>Transfer checking funds to savings goal: <strong id="allocate-goal-name">Goal</strong></p>
+      </div>
+      <form id="allocate-goal-form">
+        <input type="hidden" id="allocate-goal-id">
+        <div class="form-group">
+          <label for="allocate-amount">Allocation Amount ($)</label>
+          <input type="number" id="allocate-amount" placeholder="0.00" min="0.01" step="0.01" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 10px;">Allocate Funds</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATIONS CONTAINER -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

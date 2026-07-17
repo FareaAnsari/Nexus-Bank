@@ -1,0 +1,15 @@
+{
+  "name": "nexus-bank",
+  "version": "1.0.0",
+  "description": "Premium Full-Stack Banking Application with Management Features",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^17.4.2",
+    "express": "^4.19.2"
+  }
+}

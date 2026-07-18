@@ -154,7 +154,7 @@ function initializeTables() {
                     { id: `h${idCounter++}`, name: 'Sir H. N. Reliance Foundation', area: 'South Mumbai', address: 'Prarthana Samaj, Raja Rammohan Roy Rd, Girgaon, Mumbai, Maharashtra 400004' },
                     { id: `h${idCounter++}`, name: 'Bombay Hospital', area: 'South Mumbai', address: '12, New Marine Lines, Marine Lines, Mumbai, Maharashtra 400020' },
                     { id: `h${idCounter++}`, name: 'Jaslok Hospital & Research Centre', area: 'South Mumbai', address: '15, Dr G.Deshmukh Marg, Pedder Road, Mumbai, Maharashtra 400026' },
-                    { id: `h${idCounter++}`, name: 'Wockhardt Hospitals', area: 'South Mumbai', address: '1877, Dr. Anandrao Nair Marg, Near Agripada Police Station, Mumbai Central, Mumbai, Maharashtra 400011' },
+                    { id: `h${idCounter++}`, name: 'Wockhardt Hospitals (South Mumbai)', area: 'South Mumbai', address: '1877, Dr. Anandrao Nair Marg, Near Agripada Police Station, Mumbai Central, Mumbai, Maharashtra 400011' },
 
                     // Western Suburbs
                     { id: `h${idCounter++}`, name: 'Kokilaben Dhirubhai Ambani Hosp.', area: 'Western Suburbs', address: 'Rao Saheb, Achutrao Patwardhan Marg, Four Bungalows, Andheri West, Mumbai, Maharashtra 400053' },
@@ -195,7 +195,7 @@ function initializeTables() {
                     // Nashik
                     { id: `h${idCounter++}`, name: 'Ashoka Medicover Hospitals', area: 'Nashik', address: 'Indira Nagar, Wadala - Pathardi Rd, Nashik, Maharashtra 422009' },
                     { id: `h${idCounter++}`, name: 'Sahyadri Super Speciality Hospital', area: 'Nashik', address: 'Mumbai Naka, Shivaji Nagar, Nashik, Maharashtra 422002' },
-                    { id: `h${idCounter++}`, name: 'Wockhardt Hospitals', area: 'Nashik', address: 'Wani House, Mumbai Naka, Nashik, Maharashtra 422001' },
+                    { id: `h${idCounter++}`, name: 'Wockhardt Hospitals (Nashik)', area: 'Nashik', address: 'Wani House, Mumbai Naka, Nashik, Maharashtra 422001' },
                     { id: `h${idCounter++}`, name: 'Shatabdi Hospital', area: 'Nashik', address: 'Mahatma Nagar, Nashik, Maharashtra 422007' },
 
                     // Chhatrapati Sambhajinagar (Aurangabad)
